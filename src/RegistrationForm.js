@@ -18,12 +18,20 @@ const onSubmit = (values) => {
   console.log(values);
 };
 
-const validationSchema = Yup.object({
+const phoneRegExp =
+  /^(\+?\d{0,4})?\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{3}\)?)\s?-?\s?(\(?\d{4}\)?)?$/;
+
+const validationSchema = Yup.object().shape({
   firstname: Yup.string().required("Required"),
   lastname: Yup.string().required("Required"),
   email: Yup.string().email("Invalid email address").required("Required"),
   address: Yup.string().required("Required"),
-  phoneNumbers: Yup.number().required("Required"),
+  phoneNumbers: Yup.array().of(
+    Yup.string()
+      .matches(phoneRegExp, "Phone number is not valid")
+      .min(10, 'Phone number should be atleast 10 digits.')
+      .required("Required")
+  ),
   password: Yup.string().required("Required"),
   confirmPassword: Yup.string()
     .oneOf([Yup.ref("password"), ""], "Password must match")
